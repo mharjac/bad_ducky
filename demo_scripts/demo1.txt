@@ -1,0 +1,6 @@
+REM Simple script example.
+REM It will just print "Hello World!" text.
+REM It is OS independent script.
+REM
+STRING Hello World!
+ENTER

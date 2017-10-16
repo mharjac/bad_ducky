@@ -1,0 +1,9 @@
+REM Ubuntu Gnome version of Hello World example.
+REM It requires a little slowdown.
+REM
+DEFAULTDELAY 300
+GUI
+STRING gedit
+ENTER
+STRING Hello World!
+ENTER

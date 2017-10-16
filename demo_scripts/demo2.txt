@@ -1,0 +1,7 @@
+REM Windows version of Hello World example.
+REM
+GUI r
+STRING notepad.exe
+ENTER
+STRING Hello World!
+ENTER

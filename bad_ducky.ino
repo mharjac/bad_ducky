@@ -13,6 +13,7 @@ const int chipSelect = 4;
 String cmd;
 String arg;
 String mode;
+String lang = "en";
 String payload;
 String prevCmd;
 String prevArg;
@@ -25,6 +26,10 @@ int led2 = 8;
 File root;
 File myFile;
 bool errLog;
+byte inChar[64];
+byte modifier[64];
+byte outChar[64];
+byte modifierKey;
 
 void setup() {
   pinMode(led2, OUTPUT);
@@ -41,6 +46,11 @@ void setup() {
 
   mode = readConfig("mode.cfg");
   payload = readConfig("exec.cfg");
+  lang = readConfig("lang.cfg");
+
+  if (lang != "en") {
+    loadLangMap("lang/" + lang + ".bin");
+  }
 
   if (mode == "c") {
     delivery(payload);
@@ -50,16 +60,15 @@ void setup() {
     mode = "m";
     writeConfig("mode.cfg", mode);
   }
-  //delivery("script2.bds");
-  
+
   management();
-  
+
   Keyboard.end();
 }
 
 void management() {
   digitalWrite(led2, HIGH);
-  
+
   while (!Serial) {
     if (errLog) {
       digitalWrite(led2, HIGH);
@@ -69,7 +78,7 @@ void management() {
     }
     ;
   }
- 
+
   Serial.println("Available payloads:");
   printDirectory(root, 0);
   root.close();
@@ -81,12 +90,16 @@ void management() {
   Serial.println();
   Serial.print("Current mode: ");
   Serial.println(mode);
+  Serial.print("Current language: ");
+  Serial.println(lang);
   Serial.print("Current payload: ");
   Serial.println(payload);
-
   Serial.println();
   Serial.println("Input mode:");
   writeConfig("mode.cfg", inputData());
+  Serial.println();
+  Serial.println("Input language:");
+  writeConfig("lang.cfg", inputData());
   Serial.println();
   Serial.println("Input payload:");
   writeConfig("exec.cfg", inputData());
@@ -126,6 +139,66 @@ String inputData() {
   return inputStr;
 }
 
+void loadLangMap(String fileName) {
+  myFile = SD.open(fileName);
+  int counter = 0;
+  if (myFile) {
+    while (myFile.available()) {
+      inChar[counter] = myFile.read();
+      modifier[counter] = myFile.read();
+      outChar[counter] = myFile.read();
+      counter += 1;
+    }
+    myFile.close();
+  } else {
+    Serial.println("error opening file " + fileName);
+  }
+}
+
+byte convertLangChar(byte in) {
+  for (int i = 0; i <= 64; i++) {
+    if (inChar[i]) {
+      if (inChar[i] == in) {
+        modifierKey = modifier[i];
+        return outChar[i];
+      }
+    }
+    else {
+      return in;
+    }
+  }
+}
+
+void printChar(byte in) {
+  if (modifierKey) {
+    Keyboard.press(modifierKey);
+    delay(5);
+    Keyboard.write(in);
+    delay(5);
+    Keyboard.release(modifierKey);
+    modifierKey = 0;
+  }
+  else {
+    Keyboard.write(in);
+    delay(5);
+  }
+}
+
+void pressChar(byte in) {
+  if (modifierKey) {
+    Keyboard.press(modifierKey);
+    delay(5);
+    Keyboard.press(in);
+    delay(5);
+    Keyboard.release(modifierKey);
+    modifierKey = 0;
+  }
+  else {
+    Keyboard.press(in);
+    delay(5);
+  }
+}
+
 String readConfig(String fileName) {
   String fileContent = "";
   myFile = SD.open(fileName);
@@ -152,15 +225,15 @@ void writeConfig(String fileName, String inputData) {
 void delivery (String fileName) {
   delay(800);
   File dataFile = SD.open(fileName);
-  
+
   if (dataFile) {
     while (dataFile.available()) {
       if (defaultDelay != 0) {
         delay(defaultDelay);
       }
-      
+
       parseCmd(dataFile);
-      
+
       if (cmd == "GUI" || cmd == "WINDOWS") {
         if (breakChar == ' ') {
           argChar = dataFile.read();
@@ -181,7 +254,7 @@ void delivery (String fileName) {
         cmdString(dataFile);
       }
       else if (cmd == "ENTER") {
-        
+
         cmdPressKey(KEY_RETURN);
       }
       else if (cmd == "REM") {
@@ -323,15 +396,15 @@ void delivery (String fileName) {
 void cmdRepeat (String arg_l) {
   int counter = arg_l.toInt();
   argChar = prevArgChar;
-  
+
   while (counter) {
     if (defaultDelay != 0) {
       delay(defaultDelay);
     }
-    
+
     cmd = prevCmd;
     arg = prevArg;
-    
+
     counter -= 1;
 
     if (prevCmd == "GUI" || prevCmd == "WINDOWS") {
@@ -450,7 +523,7 @@ void cmdRepeat (String arg_l) {
   arg = "";
 }
 
-void cmdRem (){
+void cmdRem () {
   cmd = "";
   arg = "";
 }
@@ -473,8 +546,9 @@ void cmdGui (char argChar_l) {
   Keyboard.press(KEY_LEFT_GUI);
   delay(100);
   if (argChar != 0x00) {
-    Keyboard.press(argChar_l);
-    delay(100); 
+    //Keyboard.press(argChar_l);
+    pressChar(convertLangChar(argChar_l));
+    delay(100);
   }
   Keyboard.releaseAll();
   prevCmd = cmd;
@@ -484,7 +558,8 @@ void cmdGui (char argChar_l) {
 }
 
 void cmdPressKey(int key) {
-  Keyboard.press(key);
+  //Keyboard.press(key);
+  pressChar(convertLangChar(key));
   delay(100);
   Keyboard.release(key);
   prevCmd = cmd;
@@ -501,7 +576,8 @@ void cmdString (File dataFile) {
       break;
     }
     else {
-      Keyboard.print(charBuff);
+      //Keyboard.print(charBuff);
+      printChar(convertLangChar(charBuff));
     }
   }
   cmd = "";
@@ -536,15 +612,16 @@ void parseArg(File dataFile) {
 void cmdKeyCombo(int key, String arg_l) {
   String argKey;
   int argLength = arg_l.length();
-  
+
   Keyboard.press(key);
   delay(100);
-  
+
   for (int i = 0; i <= argLength; i++) {
     charBuff = arg_l.charAt(i);
     if (charBuff == ' ' || charBuff == '\n') {
       if (argKey.length() == 1) {
-        Keyboard.press(argKey.charAt(0));
+        //Keyboard.press(argKey.charAt(0));
+        pressChar(convertLangChar(argKey.charAt(0)));
         delay(100);
       }
       else {

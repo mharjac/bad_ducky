@@ -12,6 +12,7 @@ https://www.aliexpress.com/item/CJMCU-Virtual-Keyboard-Badusb-USB-TF-Memory-Keyb
 - there is no limit on payload size (the only limit is SD card size)
 - it has two operational modes (continuous delivery and one-time delivery)
 - you can switch between modes/payloads with your smartphone
+- it has support for different keyboard languages
 
 For more info on how to get started check [wiki pages](https://github.com/mharjac/bad_ducky/wiki).
 

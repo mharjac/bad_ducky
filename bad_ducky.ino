@@ -1,7 +1,6 @@
 #include <Keyboard.h>
 #include <SPI.h>
 #include <SD.h>
-
 #define KEY_MENU 0xED
 #define KEY_BREAK 0xD0
 #define KEY_NUMLOCK 0xDB
@@ -105,6 +104,15 @@ void management() {
   writeConfig("exec.cfg", inputData());
   Serial.println();
   Serial.println("Get ready to have some fun :)");
+  mode = readConfig("mode.cfg");
+  payload = readConfig("exec.cfg");
+  lang = readConfig("lang.cfg");
+  Serial.print("Current mode: ");
+  Serial.println(mode);
+  Serial.print("Current language: ");
+  Serial.println(lang);
+  Serial.print("Current payload: ");
+  Serial.println(payload);
 }
 
 void printDirectory(File dir, int numTabs) {
@@ -149,6 +157,7 @@ void loadLangMap(String fileName) {
       outChar[counter] = myFile.read();
       counter += 1;
     }
+    Serial.println(fileName + " loaded " + inChar[0] +" - " + modifier[0] + " - " + outChar[0]);
     myFile.close();
   } else {
     Serial.println("error opening file " + fileName);
@@ -180,10 +189,9 @@ void printChar(byte in) {
   }
   else {
     Keyboard.write(in);
-    delay(5);
+    delay(7);
   }
 }
-
 void pressChar(byte in) {
   if (modifierKey) {
     Keyboard.press(modifierKey);
@@ -614,7 +622,7 @@ void cmdKeyCombo(int key, String arg_l) {
   int argLength = arg_l.length();
 
   Keyboard.press(key);
-  delay(100);
+  delay(300);
 
   for (int i = 0; i <= argLength; i++) {
     charBuff = arg_l.charAt(i);
@@ -750,4 +758,3 @@ void cmdKeyCombo(int key, String arg_l) {
 
 void loop() {
 }
-

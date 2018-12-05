@@ -587,7 +587,7 @@ void cmdString (File dataFile) {
 void parseCmd(File dataFile) {
   while (true) {
     charBuff = dataFile.read();
-    if (charBuff == ' ' || charBuff == '\n' || cmd.length() > 15) {
+    if (charBuff == ' ' || charBuff == '\n' || charBuff == '\r' || cmd.length() > 15) {
       breakChar = charBuff;
       break;
     }

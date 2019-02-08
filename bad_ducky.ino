@@ -17,6 +17,7 @@ String lang = "en";
 String payload;
 String prevCmd;
 String prevArg;
+String argString; // added to implement proper support for GUI combos
 char argChar;
 char prevArgChar;
 char charBuff;
@@ -236,10 +237,16 @@ void delivery (String fileName) {
 
       if (cmd == "GUI" || cmd == "WINDOWS") {
         if (breakChar == ' ') {
-          argChar = dataFile.read();
-          cmdGui(argChar);
+           parseArg(dataFile);
+           arg = arg + '\n';
+          if (argString.length() == 1) {
+            cmdGui(argString.charAt(0));
+          }
+          else {
+            cmdKeyCombo(KEY_LEFT_GUI, arg);
+          }
           //just to remove trailing \n
-          dataFile.read();
+          //dataFile.read();
         }
         else {
           cmdGui(0x00);

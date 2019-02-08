@@ -17,7 +17,6 @@ String lang = "en";
 String payload;
 String prevCmd;
 String prevArg;
-String argString; // added to implement proper support for GUI combos
 char argChar;
 char prevArgChar;
 char charBuff;

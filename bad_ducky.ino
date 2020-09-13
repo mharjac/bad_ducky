@@ -9,6 +9,8 @@
 #define KEY_SCROLLLOCK 0xCF
 #define KEY_SPACE 0xB4
 
+#define DUMP_FILENAME "serial.dmp"
+
 const int chipSelect = 4;
 String cmd;
 String arg;
@@ -25,12 +27,14 @@ int defaultDelay = 0;
 int led2 = 8;
 File root;
 File myFile;
+File dumpFile;
 bool errLog;
 byte inChar[64];
 byte modifier[64];
 byte outChar[64];
 byte modifierKey;
-
+byte dumpData[32];
+size_t serialRead = 0;
 void setup() {
   pinMode(led2, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -59,11 +63,27 @@ void setup() {
     delivery(payload);
     mode = "m";
     writeConfig("mode.cfg", mode);
+    dumpSerialToFile(DUMP_FILENAME);
   }
 
   management();
 
   Keyboard.end();
+}
+
+void dumpSerialToFile(String fileName) {
+  String inputStr;
+  dumpFile = SD.open(fileName, FILE_WRITE);
+  if (dumpFile) {
+    while (1) {
+      if (Serial.available() > 0) {
+        serialRead = Serial.readBytes(dumpData, 64);
+        dumpFile.write(dumpData, serialRead);
+        dumpFile.flush();
+      }
+    }
+  }
+ //dumpFile.close()
 }
 
 void management() {
@@ -750,4 +770,3 @@ void cmdKeyCombo(int key, String arg_l) {
 
 void loop() {
 }
-

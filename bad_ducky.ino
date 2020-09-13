@@ -72,18 +72,16 @@ void setup() {
 }
 
 void dumpSerialToFile(String fileName) {
-  String inputStr;
   dumpFile = SD.open(fileName, FILE_WRITE);
   if (dumpFile) {
     while (1) {
       if (Serial.available() > 0) {
-        serialRead = Serial.readBytes(dumpData, 64);
+        serialRead = Serial.readBytes(dumpData, 32);
         dumpFile.write(dumpData, serialRead);
         dumpFile.flush();
       }
     }
   }
- //dumpFile.close()
 }
 
 void management() {

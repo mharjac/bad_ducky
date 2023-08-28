@@ -223,7 +223,7 @@ void writeConfig(String fileName, String inputData) {
 }
 
 void delivery (String fileName) {
-  delay(800);
+  delay(100);
   File dataFile = SD.open(fileName);
 
   if (dataFile) {
@@ -544,11 +544,11 @@ void cmdDelay (String arg_l) {
 
 void cmdGui (char argChar_l) {
   Keyboard.press(KEY_LEFT_GUI);
-  delay(100);
+  delay(50);
   if (argChar != 0x00) {
     //Keyboard.press(argChar_l);
     pressChar(convertLangChar(argChar_l));
-    delay(100);
+    delay(50);
   }
   Keyboard.releaseAll();
   prevCmd = cmd;
@@ -560,7 +560,7 @@ void cmdGui (char argChar_l) {
 void cmdPressKey(int key) {
   //Keyboard.press(key);
   pressChar(convertLangChar(key));
-  delay(100);
+  delay(10);
   Keyboard.release(key);
   prevCmd = cmd;
   cmd = "";
@@ -614,7 +614,7 @@ void cmdKeyCombo(int key, String arg_l) {
   int argLength = arg_l.length();
 
   Keyboard.press(key);
-  delay(100);
+  delay(10);
 
   for (int i = 0; i <= argLength; i++) {
     charBuff = arg_l.charAt(i);
@@ -622,7 +622,7 @@ void cmdKeyCombo(int key, String arg_l) {
       if (argKey.length() == 1) {
         //Keyboard.press(argKey.charAt(0));
         pressChar(convertLangChar(argKey.charAt(0)));
-        delay(100);
+        delay(10);
       }
       else {
         if (argKey == "ENTER") {
@@ -733,7 +733,7 @@ void cmdKeyCombo(int key, String arg_l) {
         else if (argKey == "GUI" || argKey == "WINDOWS") {
           Keyboard.press(KEY_LEFT_GUI);
         }
-        delay(100);
+        delay(10);
       }
       argKey = "";
     }

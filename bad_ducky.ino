@@ -544,11 +544,11 @@ void cmdDelay (String arg_l) {
 
 void cmdGui (char argChar_l) {
   Keyboard.press(KEY_LEFT_GUI);
-  delay(100);
+  delay(50);
   if (argChar != 0x00) {
     //Keyboard.press(argChar_l);
     pressChar(convertLangChar(argChar_l));
-    delay(100);
+    delay(50);
   }
   Keyboard.releaseAll();
   prevCmd = cmd;

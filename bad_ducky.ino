@@ -560,7 +560,7 @@ void cmdGui (char argChar_l) {
 void cmdPressKey(int key) {
   //Keyboard.press(key);
   pressChar(convertLangChar(key));
-  delay(100);
+  delay(10);
   Keyboard.release(key);
   prevCmd = cmd;
   cmd = "";

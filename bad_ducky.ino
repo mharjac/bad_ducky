@@ -733,7 +733,7 @@ void cmdKeyCombo(int key, String arg_l) {
         else if (argKey == "GUI" || argKey == "WINDOWS") {
           Keyboard.press(KEY_LEFT_GUI);
         }
-        delay(100);
+        delay(10);
       }
       argKey = "";
     }

@@ -622,7 +622,7 @@ void cmdKeyCombo(int key, String arg_l) {
       if (argKey.length() == 1) {
         //Keyboard.press(argKey.charAt(0));
         pressChar(convertLangChar(argKey.charAt(0)));
-        delay(100);
+        delay(10);
       }
       else {
         if (argKey == "ENTER") {

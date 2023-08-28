@@ -223,7 +223,7 @@ void writeConfig(String fileName, String inputData) {
 }
 
 void delivery (String fileName) {
-  delay(800);
+  delay(100);
   File dataFile = SD.open(fileName);
 
   if (dataFile) {

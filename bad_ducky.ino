@@ -614,7 +614,7 @@ void cmdKeyCombo(int key, String arg_l) {
   int argLength = arg_l.length();
 
   Keyboard.press(key);
-  delay(100);
+  delay(10);
 
   for (int i = 0; i <= argLength; i++) {
     charBuff = arg_l.charAt(i);
